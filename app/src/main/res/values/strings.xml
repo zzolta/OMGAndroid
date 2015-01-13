@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="button">Update The TextView</string>
     <string name="hint">A Name</string>
+    <string name="share">Share</string>
 
 </resources>
