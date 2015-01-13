@@ -41,7 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:hint="@string/hint" />
+        android:hint="@string/hint"
+        android:inputType="textCapSentences" />
 
     <ListView
         android:id="@+id/main_listview"
