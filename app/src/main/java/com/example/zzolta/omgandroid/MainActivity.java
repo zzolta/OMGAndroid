@@ -2,8 +2,10 @@ package com.example.zzolta.omgandroid;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     TextView mainTextView;
     Button mainButton;
@@ -40,6 +42,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, mNameList);
 
         mainListView.setAdapter(mArrayAdapter);
+        mainListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -57,5 +60,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mNameList.add(textValue);
         mArrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("omg android", position + ": " + mNameList.get(position));
     }
 }
