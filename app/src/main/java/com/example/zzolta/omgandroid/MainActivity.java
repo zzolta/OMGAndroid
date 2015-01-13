@@ -42,8 +42,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        displayWelcome();
+
         mainTextView = (TextView) findViewById(R.id.main_textview);
-        mainTextView.setText("Set in Java!");
+        mainTextView.setText("Welcome, " + mSharedPreferences.getString(PREF_NAME, "") + "!");
 
         mainButton = (Button) findViewById(R.id.main_button);
         mainButton.setOnClickListener(this);
@@ -57,7 +59,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mainListView.setAdapter(mArrayAdapter);
         mainListView.setOnItemClickListener(this);
 
-        displayWelcome();
     }
 
     private void displayWelcome() {
