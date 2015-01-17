@@ -17,8 +17,10 @@ import org.json.JSONObject;
  * Created by Zolta.Szekely on 2015-01-17.
  */
 public class JSONAdapter extends BaseAdapter {
+    public static final String AUTHOR_NAME = "author_name";
+    public static final String TITLE = "title";
+    public static final String COVER_I = "cover_i";
     private static final String IMAGE_URL_BASE = "http://covers.openlibrary.org/b/id/";
-
     Context mContext;
     LayoutInflater mInflater;
     JSONArray mJsonArray;
@@ -51,19 +53,22 @@ public class JSONAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.row_book, null);
 
-            holder = new ViewHolder();
-            holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.img_thumbnail);
-            holder.titleTextView = (TextView) convertView.findViewById(R.id.text_title);
-            holder.authorTextView = (TextView) convertView.findViewById(R.id.text_author);
+            holder = createViewHolder(convertView);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        setData(position, holder);
+
+        return convertView;
+    }
+
+    private void setData(int position, ViewHolder holder) {
         JSONObject jsonObject = (JSONObject) getItem(position);
-        if (jsonObject.has("cover_i")) {
-            String imageID = jsonObject.optString("cover_i");
+        if (jsonObject.has(COVER_I)) {
+            String imageID = jsonObject.optString(COVER_I);
 
             String imageURL = IMAGE_URL_BASE + imageID + "-L.jpg";
 
@@ -72,17 +77,33 @@ public class JSONAdapter extends BaseAdapter {
             holder.thumbnailImageView.setImageResource(R.drawable.ic_books);
         }
 
-        String bookTitle = "";
+        holder.titleTextView.setText(getBookTitle(jsonObject));
+        holder.authorTextView.setText(getAuthor(jsonObject));
+    }
+
+    private ViewHolder createViewHolder(View convertView) {
+        ViewHolder holder;
+        holder = new ViewHolder();
+        holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.img_thumbnail);
+        holder.titleTextView = (TextView) convertView.findViewById(R.id.text_title);
+        holder.authorTextView = (TextView) convertView.findViewById(R.id.text_author);
+        return holder;
+    }
+
+    private String getAuthor(JSONObject jsonObject) {
         String authorName = "";
-        if (jsonObject.has("title")) {
-            bookTitle = jsonObject.optString("title");
+        if (jsonObject.has(AUTHOR_NAME)) {
+            authorName = jsonObject.optJSONArray(AUTHOR_NAME).optString(0);
         }
-        if (jsonObject.has("author_name")) {
-            authorName = jsonObject.optJSONArray("author_name").optString(0);
+        return authorName;
+    }
+
+    private String getBookTitle(JSONObject jsonObject) {
+        String bookTitle = "";
+        if (jsonObject.has(TITLE)) {
+            bookTitle = jsonObject.optString(TITLE);
         }
-        holder.titleTextView.setText(bookTitle);
-        holder.authorTextView.setText(authorName);
-        return convertView;
+        return bookTitle;
     }
 
     public void updateData(JSONArray jsonArray) {
