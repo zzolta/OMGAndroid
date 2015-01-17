@@ -75,12 +75,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
 
-        mainListView = (ListView) findViewById(R.id.main_listview);
-
-        mainListView.setOnItemClickListener(this);
-
         mJSONAdapter = new JSONAdapter(this, getLayoutInflater());
-
+        mainListView = (ListView) findViewById(R.id.main_listview);
+        mainListView.setOnItemClickListener(this);
         mainListView.setAdapter(mJSONAdapter);
 
         mDialog = new ProgressDialog(this);
@@ -96,33 +93,37 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (name.length() > 0) {
             Toast.makeText(this, "Welcome back, " + name + "!", Toast.LENGTH_LONG).show();
         } else {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle(getString(R.string.greeting));
-            alert.setMessage(getString(R.string.what_is_your_name));
-
-            final EditText input = new EditText(this);
-            alert.setView(input);
-
-            alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String inputName = input.getText().toString();
-                    SharedPreferences.Editor editor = mSharedPreferences.edit();
-                    editor.putString(PREF_NAME, inputName);
-                    editor.apply();
-
-                    Toast.makeText(getApplicationContext(), "Welcome, " + inputName + "!", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-
-            alert.show();
+            displayUserDialog();
         }
+    }
+
+    private void displayUserDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(getString(R.string.greeting));
+        alert.setMessage(getString(R.string.what_is_your_name));
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String inputName = input.getText().toString();
+                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                editor.putString(PREF_NAME, inputName);
+                editor.apply();
+
+                Toast.makeText(getApplicationContext(), "Welcome, " + inputName + "!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        alert.show();
     }
 
     @Override
@@ -170,19 +171,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void queryBooks(String searchString) {
-        String urlString = "";
-        try {
-            urlString = URLEncoder.encode(searchString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
         mDialog.show();
 
-        client.get(BOOK_QUERY_URL + urlString, new JsonHttpResponseHandler() {
+        new AsyncHttpClient().get(BOOK_QUERY_URL + encodeString(searchString), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
                 mDialog.dismiss();
@@ -201,5 +192,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Log.e("omg android", statusCode + " " + throwable.getMessage());
             }
         });
+    }
+
+    private String encodeString(String searchString) {
+        String urlString = "";
+        try {
+            urlString = URLEncoder.encode(searchString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return urlString;
     }
 }
