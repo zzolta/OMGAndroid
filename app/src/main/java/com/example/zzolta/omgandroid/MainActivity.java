@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mainListView.setAdapter(mJSONAdapter);
 
         mDialog = new ProgressDialog(this);
-        mDialog.setMessage("Searching for books");
+        mDialog.setMessage(getString(R.string.search_in_progress));
         mDialog.setCancelable(false);
     }
 
@@ -97,25 +97,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             Toast.makeText(this, "Welcome back, " + name + "!", Toast.LENGTH_LONG).show();
         } else {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Hello!");
-            alert.setMessage("What is your name?");
+            alert.setTitle(getString(R.string.greeting));
+            alert.setMessage(getString(R.string.what_is_your_name));
 
             final EditText input = new EditText(this);
             alert.setView(input);
 
-            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String inputName = input.getText().toString();
                     SharedPreferences.Editor editor = mSharedPreferences.edit();
                     editor.putString(PREF_NAME, inputName);
-                    editor.commit();
+                    editor.apply();
 
                     Toast.makeText(getApplicationContext(), "Welcome, " + inputName + "!", Toast.LENGTH_LONG).show();
                 }
             });
 
-            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }
@@ -187,7 +187,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onSuccess(JSONObject response) {
                 mDialog.dismiss();
 
-                Toast.makeText(getApplicationContext(), "Sucess!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.success), Toast.LENGTH_LONG).show();
 
                 mJSONAdapter.updateData(response.optJSONArray("docs"));
             }

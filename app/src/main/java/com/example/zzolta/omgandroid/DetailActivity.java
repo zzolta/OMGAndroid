@@ -58,7 +58,7 @@ public class DetailActivity extends ActionBarActivity {
     private void setShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Book Recommendation!");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject));
         shareIntent.putExtra(Intent.EXTRA_TEXT, mImageURL);
 
         mShareActionProvider.setShareIntent(shareIntent);

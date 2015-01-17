@@ -9,5 +9,12 @@
     <string name="share">Share</string>
     <string name="image_thumbnail">Thumbnail Image</string>
     <string name="activity_details">Book Details</string>
+    <string name="subject">Book Recommendation!</string>
+    <string name="greeting">Hello!</string>
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="success">Success!</string>
+    <string name="search_in_progress">Searching for books</string>
 
 </resources>
