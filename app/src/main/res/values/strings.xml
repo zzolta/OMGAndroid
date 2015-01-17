@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">OMG Android</string>
-    <string name="textview">Zolta is learning Android development!</string>
+    <string name="app_name">Bookmaster General</string>
+    <string name="textview">Search For Books!</string>
     <string name="action_settings">Settings</string>
-    <string name="button">Update the TextView</string>
-    <string name="hint">Type a name</string>
+    <string name="button">Search</string>
+    <string name="hint">Title and/or Author</string>
     <string name="share">Share</string>
 
 </resources>

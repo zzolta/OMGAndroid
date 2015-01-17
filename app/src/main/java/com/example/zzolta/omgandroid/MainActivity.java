@@ -49,7 +49,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         displayWelcome();
 
         mainTextView = (TextView) findViewById(R.id.main_textview);
-        mainTextView.setText("Welcome, " + mSharedPreferences.getString(PREF_NAME, "") + "!");
 
         mainButton = (Button) findViewById(R.id.main_button);
         mainButton.setOnClickListener(this);
