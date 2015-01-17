@@ -17,14 +17,19 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -32,12 +37,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private static final String PREFS = "prefs";
     private static final String PREF_NAME = "name";
 
+    private static final String BOOK_QUERY_URL = "http://openlibrary.org/search.json?q=";
+
     TextView mainTextView;
     Button mainButton;
     EditText mainEditText;
     ListView mainListView;
-    ArrayAdapter<String> mArrayAdapter;
-    ArrayList<String> mNameList = new ArrayList<>();
+    JSONAdapter mJSONAdapter;
     ShareActionProvider mShareActionProvider;
     SharedPreferences mSharedPreferences;
 
@@ -69,11 +75,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mainListView = (ListView) findViewById(R.id.main_listview);
 
-        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, mNameList);
-
-        mainListView.setAdapter(mArrayAdapter);
         mainListView.setOnItemClickListener(this);
 
+        mJSONAdapter = new JSONAdapter(this, getLayoutInflater());
+
+        mainListView.setAdapter(mJSONAdapter);
     }
 
     private void displayWelcome() {
@@ -141,18 +147,38 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        String textValue = mainEditText.getText().toString();
-
-        mainTextView.setText(textValue + " is learning Android development!");
-
-        mNameList.add(textValue);
-        mArrayAdapter.notifyDataSetChanged();
-
-        setShareIntent();
+        queryBooks(mainEditText.getText().toString());
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("omg android", position + ": " + mNameList.get(position));
+    }
+
+    private void queryBooks(String searchString) {
+        String urlString = "";
+        try {
+            urlString = URLEncoder.encode(searchString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(BOOK_QUERY_URL + urlString, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Toast.makeText(getApplicationContext(), "Sucess!", Toast.LENGTH_LONG).show();
+
+                mJSONAdapter.updateData(response.optJSONArray("docs"));
+            }
+
+            @Override
+            public void onFailure(int statusCode, Throwable throwable, JSONObject error) {
+                Toast.makeText(getApplicationContext(), "Error: " + statusCode + " " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+
+                Log.e("omg android", statusCode + " " + throwable.getMessage());
+            }
+        });
     }
 }
