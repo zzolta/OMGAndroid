@@ -1,7 +1,6 @@
 package com.example.zzolta.omgandroid.adapters;
 
 import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,24 +10,25 @@ import org.json.JSONObject;
  */
 public class JSONObjectAdapter {
 
-    JSONObject jsonObject;
+    private final JSONObject jsonObject;
 
     public JSONObjectAdapter(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
     public String getAuthors() {
-        String delimiter = ",";
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (jsonObject.has(OpenLibraryBookConstants.AUTHOR_NAME)) {
-            JSONArray jsonArray = jsonObject.optJSONArray(OpenLibraryBookConstants.AUTHOR_NAME);
+            final JSONArray jsonArray = jsonObject.optJSONArray(OpenLibraryBookConstants.AUTHOR_NAME);
+            final String delimiter = ",";
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     if (i != 0) {
                         sb.append(delimiter);
                     }
                     sb.append(jsonArray.get(i).toString());
-                } catch (JSONException ignored) {
+                }
+                catch (final JSONException ignored) {
                 }
             }
         }

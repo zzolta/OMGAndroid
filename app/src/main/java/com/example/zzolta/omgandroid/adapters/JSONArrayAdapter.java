@@ -7,11 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.zzolta.omgandroid.R;
 import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -47,7 +45,7 @@ public class JSONArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
 
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.row_book, null);
@@ -65,25 +63,24 @@ public class JSONArrayAdapter extends BaseAdapter {
     }
 
     private void setData(int position, ViewHolder holder) {
-        JSONObject jsonObject = (JSONObject) getItem(position);
+        final JSONObject jsonObject = (JSONObject) getItem(position);
         if (jsonObject.has(OpenLibraryBookConstants.COVER_I)) {
-            String imageID = jsonObject.optString(OpenLibraryBookConstants.COVER_I);
+            final String imageID = jsonObject.optString(OpenLibraryBookConstants.COVER_I);
 
-            String imageURL = IMAGE_URL_BASE + imageID + "-L.jpg";
+            final String imageURL = IMAGE_URL_BASE + imageID + "-L.jpg";
 
             Picasso.with(mContext).load(imageURL).placeholder(R.drawable.ic_books).into(holder.thumbnailImageView);
         } else {
             holder.thumbnailImageView.setImageResource(R.drawable.ic_books);
         }
 
-        JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
+        final JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
         holder.titleTextView.setText(jsonObjectAdapter.getBookTitle());
         holder.authorTextView.setText(jsonObjectAdapter.getAuthors());
     }
 
     private ViewHolder createViewHolder(View convertView) {
-        ViewHolder holder;
-        holder = new ViewHolder();
+        final ViewHolder holder = new ViewHolder();
         holder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.img_thumbnail);
         holder.titleTextView = (TextView) convertView.findViewById(R.id.text_title);
         holder.authorTextView = (TextView) convertView.findViewById(R.id.text_author);
@@ -96,8 +93,8 @@ public class JSONArrayAdapter extends BaseAdapter {
     }
 
     private static class ViewHolder {
-        public ImageView thumbnailImageView;
-        public TextView titleTextView;
-        public TextView authorTextView;
+        private ImageView thumbnailImageView;
+        private TextView titleTextView;
+        private TextView authorTextView;
     }
 }

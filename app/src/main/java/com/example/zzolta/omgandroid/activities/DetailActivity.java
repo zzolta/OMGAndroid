@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.zzolta.omgandroid.R;
 import com.example.zzolta.omgandroid.constants.book.IntentExtraDataBookConstants;
 import com.squareup.picasso.Picasso;
@@ -21,8 +20,8 @@ public class DetailActivity extends ActionBarActivity {
 
     private static final String IMAGE_URL_BASE = "http://covers.openlibrary.org/b/id/";
 
-    String mImageURL;
-    ShareActionProvider mShareActionProvider;
+    private String imageURL;
+    private ShareActionProvider shareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,20 +31,20 @@ public class DetailActivity extends ActionBarActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ImageView imageView = (ImageView) findViewById(R.id.img_cover);
+        final ImageView imageView = (ImageView) findViewById(R.id.img_cover);
 
-        String coverID = this.getIntent().getExtras().getString(IntentExtraDataBookConstants.COVER_ID);
+        final String coverID = this.getIntent().getExtras().getString(IntentExtraDataBookConstants.COVER_ID);
 
         if (coverID.length() > 0) {
-            mImageURL = IMAGE_URL_BASE + coverID + "-L.jpg";
+            imageURL = IMAGE_URL_BASE + coverID + "-L.jpg";
         }
 
-        Picasso.with(this).load(mImageURL).placeholder(R.drawable.img_books_loading).into(imageView);
+        Picasso.with(this).load(imageURL).placeholder(R.drawable.img_books_loading).into(imageView);
 
-        TextView titleView = (TextView) findViewById(R.id.text_title);
+        final TextView titleView = (TextView) findViewById(R.id.text_title);
         titleView.setText(this.getIntent().getExtras().getString(IntentExtraDataBookConstants.TITLE));
 
-        TextView authors = (TextView) findViewById(R.id.text_author);
+        final TextView authors = (TextView) findViewById(R.id.text_author);
         authors.setText(this.getIntent().getExtras().getString(IntentExtraDataBookConstants.AUTHORS));
     }
 
@@ -53,10 +52,10 @@ public class DetailActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        final MenuItem shareItem = menu.findItem(R.id.menu_item_share);
 
         if (shareItem != null) {
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+            shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         }
 
         setShareIntent();
@@ -65,11 +64,11 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     private void setShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject));
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mImageURL);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, imageURL);
 
-        mShareActionProvider.setShareIntent(shareIntent);
+        shareActionProvider.setShareIntent(shareIntent);
     }
 }

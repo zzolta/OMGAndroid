@@ -17,13 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.example.zzolta.omgandroid.R;
 import com.example.zzolta.omgandroid.adapters.JSONArrayAdapter;
 import com.example.zzolta.omgandroid.adapters.JSONObjectAdapter;
@@ -31,7 +25,6 @@ import com.example.zzolta.omgandroid.constants.book.IntentExtraDataBookConstants
 import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -45,14 +38,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private static final String BOOK_QUERY_URL = "http://openlibrary.org/search.json?q=";
 
-    TextView mainTextView;
-    Button mainButton;
-    EditText mainEditText;
-    ListView mainListView;
-    JSONArrayAdapter mJSONArrayAdapter;
-    ShareActionProvider mShareActionProvider;
-    SharedPreferences mSharedPreferences;
-    ProgressDialog mDialog;
+    private TextView mainTextView;
+    private EditText mainEditText;
+    private JSONArrayAdapter jsonArrayAdapter;
+    private ShareActionProvider shareActionProvider;
+    private SharedPreferences sharedPreferences;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         mainTextView = (TextView) findViewById(R.id.main_textview);
 
-        mainButton = (Button) findViewById(R.id.main_button);
+        final Button mainButton = (Button) findViewById(R.id.main_button);
         mainButton.setOnClickListener(this);
 
         mainEditText = (EditText) findViewById(R.id.main_edittext);
@@ -72,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     MainActivity.this.onClick(null);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mainEditText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                     return true;
                 }
@@ -80,20 +71,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
 
-        mJSONArrayAdapter = new JSONArrayAdapter(this, getLayoutInflater());
-        mainListView = (ListView) findViewById(R.id.main_listview);
+        jsonArrayAdapter = new JSONArrayAdapter(this, getLayoutInflater());
+        final ListView mainListView = (ListView) findViewById(R.id.main_listview);
         mainListView.setOnItemClickListener(this);
-        mainListView.setAdapter(mJSONArrayAdapter);
+        mainListView.setAdapter(jsonArrayAdapter);
 
-        mDialog = new ProgressDialog(this);
-        mDialog.setMessage(getString(R.string.search_in_progress));
-        mDialog.setCancelable(false);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.search_in_progress));
+        progressDialog.setCancelable(false);
     }
 
     private void displayWelcome() {
-        mSharedPreferences = getSharedPreferences(PREFS, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(PREFS, MODE_PRIVATE);
 
-        String name = mSharedPreferences.getString(PREF_NAME, "");
+        final String name = sharedPreferences.getString(PREF_NAME, "");
 
         if (name.length() > 0) {
             Toast.makeText(this, "Welcome back, " + name + "!", Toast.LENGTH_LONG).show();
@@ -103,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void displayUserDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.greeting));
         alert.setMessage(getString(R.string.what_is_your_name));
 
@@ -113,8 +104,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String inputName = input.getText().toString();
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                final String inputName = input.getText().toString();
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(PREF_NAME, inputName);
                 editor.apply();
 
@@ -136,9 +127,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        final MenuItem shareItem = menu.findItem(R.id.menu_item_share);
         if (shareItem != null) {
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+            shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         }
 
         setShareIntent();
@@ -147,13 +138,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void setShareIntent() {
-        if (mShareActionProvider != null) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        if (shareActionProvider != null) {
+            final Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Android Development");
             shareIntent.putExtra(Intent.EXTRA_TEXT, mainTextView.getText());
 
-            mShareActionProvider.setShareIntent(shareIntent);
+            shareActionProvider.setShareIntent(shareIntent);
         }
     }
 
@@ -164,13 +155,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        JSONObject jsonObject = (JSONObject) mJSONArrayAdapter.getItem(position);
-        String coverID = jsonObject.optString(OpenLibraryBookConstants.COVER_I, "");
-        JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
-        String title = jsonObjectAdapter.getBookTitle();
-        String authors = jsonObjectAdapter.getAuthors();
+        final JSONObject jsonObject = (JSONObject) jsonArrayAdapter.getItem(position);
+        final String coverID = jsonObject.optString(OpenLibraryBookConstants.COVER_I, "");
+        final JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
+        final String title = jsonObjectAdapter.getBookTitle();
+        final String authors = jsonObjectAdapter.getAuthors();
 
-        Intent detailIntent = new Intent(this, DetailActivity.class);
+        final Intent detailIntent = new Intent(this, DetailActivity.class);
 
         detailIntent.putExtra(IntentExtraDataBookConstants.COVER_ID, coverID);
         detailIntent.putExtra(IntentExtraDataBookConstants.TITLE, title);
@@ -180,21 +171,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void queryBooks(String searchString) {
-        mDialog.show();
+        progressDialog.show();
 
         new AsyncHttpClient().get(BOOK_QUERY_URL + encodeString(searchString), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-                mDialog.dismiss();
+                progressDialog.dismiss();
 
                 Toast.makeText(getApplicationContext(), getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                mJSONArrayAdapter.updateData(response.optJSONArray("docs"));
+                jsonArrayAdapter.updateData(response.optJSONArray("docs"));
             }
 
             @Override
             public void onFailure(int statusCode, Throwable throwable, JSONObject error) {
-                mDialog.dismiss();
+                progressDialog.dismiss();
 
                 Toast.makeText(getApplicationContext(), "Error: " + statusCode + " " + throwable.getMessage(), Toast.LENGTH_LONG).show();
 
@@ -207,8 +198,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         String urlString = "";
         try {
             urlString = URLEncoder.encode(searchString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        }
+        catch (final UnsupportedEncodingException e) {
+            Log.e(this.getClass().getName(), e.getMessage(), e);
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return urlString;
