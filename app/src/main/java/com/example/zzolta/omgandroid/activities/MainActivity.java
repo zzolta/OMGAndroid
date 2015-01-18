@@ -1,4 +1,4 @@
-package com.example.zzolta.omgandroid;
+package com.example.zzolta.omgandroid.activities;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -24,12 +24,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.zzolta.omgandroid.R;
+import com.example.zzolta.omgandroid.adapters.JSONArrayAdapter;
+import com.example.zzolta.omgandroid.adapters.JSONObjectAdapter;
 import com.example.zzolta.omgandroid.constants.book.IntentExtraDataBookConstants;
 import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -47,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     Button mainButton;
     EditText mainEditText;
     ListView mainListView;
-    JSONAdapter mJSONAdapter;
+    JSONArrayAdapter mJSONArrayAdapter;
     ShareActionProvider mShareActionProvider;
     SharedPreferences mSharedPreferences;
     ProgressDialog mDialog;
@@ -78,10 +80,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
 
-        mJSONAdapter = new JSONAdapter(this, getLayoutInflater());
+        mJSONArrayAdapter = new JSONArrayAdapter(this, getLayoutInflater());
         mainListView = (ListView) findViewById(R.id.main_listview);
         mainListView.setOnItemClickListener(this);
-        mainListView.setAdapter(mJSONAdapter);
+        mainListView.setAdapter(mJSONArrayAdapter);
 
         mDialog = new ProgressDialog(this);
         mDialog.setMessage(getString(R.string.search_in_progress));
@@ -162,16 +164,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        JSONObject jsonObject = (JSONObject) mJSONAdapter.getItem(position);
+        JSONObject jsonObject = (JSONObject) mJSONArrayAdapter.getItem(position);
         String coverID = jsonObject.optString(OpenLibraryBookConstants.COVER_I, "");
-        String title = jsonObject.optString(OpenLibraryBookConstants.TITLE, "");
-        JSONArray authors = jsonObject.optJSONArray(OpenLibraryBookConstants.AUTHOR_NAME);
+        JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
+        String title = jsonObjectAdapter.getBookTitle();
+        String authors = jsonObjectAdapter.getAuthors();
 
         Intent detailIntent = new Intent(this, DetailActivity.class);
 
         detailIntent.putExtra(IntentExtraDataBookConstants.COVER_ID, coverID);
         detailIntent.putExtra(IntentExtraDataBookConstants.TITLE, title);
-        detailIntent.putExtra(IntentExtraDataBookConstants.AUTHORS, authors.toString());
+        detailIntent.putExtra(IntentExtraDataBookConstants.AUTHORS, authors);
 
         startActivity(detailIntent);
     }
@@ -186,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 Toast.makeText(getApplicationContext(), getString(R.string.success), Toast.LENGTH_LONG).show();
 
-                mJSONAdapter.updateData(response.optJSONArray("docs"));
+                mJSONArrayAdapter.updateData(response.optJSONArray("docs"));
             }
 
             @Override

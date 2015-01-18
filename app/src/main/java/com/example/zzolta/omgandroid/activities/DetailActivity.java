@@ -1,4 +1,4 @@
-package com.example.zzolta.omgandroid;
+package com.example.zzolta.omgandroid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.zzolta.omgandroid.R;
 import com.example.zzolta.omgandroid.constants.book.IntentExtraDataBookConstants;
 import com.squareup.picasso.Picasso;
 

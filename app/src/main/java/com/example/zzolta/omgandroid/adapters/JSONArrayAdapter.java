@@ -1,4 +1,4 @@
-package com.example.zzolta.omgandroid;
+package com.example.zzolta.omgandroid.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,23 +8,23 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.zzolta.omgandroid.R;
 import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Zolta.Szekely on 2015-01-17.
  */
-public class JSONAdapter extends BaseAdapter {
+public class JSONArrayAdapter extends BaseAdapter {
     private static final String IMAGE_URL_BASE = "http://covers.openlibrary.org/b/id/";
     Context mContext;
     LayoutInflater mInflater;
     JSONArray mJsonArray;
 
-    public JSONAdapter(Context context, LayoutInflater inflater) {
+    public JSONArrayAdapter(Context context, LayoutInflater inflater) {
         mContext = context;
         mInflater = inflater;
         mJsonArray = new JSONArray();
@@ -76,34 +76,9 @@ public class JSONAdapter extends BaseAdapter {
             holder.thumbnailImageView.setImageResource(R.drawable.ic_books);
         }
 
-        holder.titleTextView.setText(getBookTitle(jsonObject));
-        holder.authorTextView.setText(getAuthors(jsonObject));
-    }
-
-    private String getAuthors(JSONObject jsonObject) {
-        String delimiter = ",";
-        StringBuilder sb = new StringBuilder();
-        if (jsonObject.has(OpenLibraryBookConstants.AUTHOR_NAME)) {
-            JSONArray jsonArray = jsonObject.optJSONArray(OpenLibraryBookConstants.AUTHOR_NAME);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    if (i != 0) {
-                        sb.append(delimiter);
-                    }
-                    sb.append(jsonArray.get(i).toString());
-                } catch (JSONException ignored) {
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    private String getBookTitle(JSONObject jsonObject) {
-        String bookTitle = "";
-        if (jsonObject.has(OpenLibraryBookConstants.TITLE)) {
-            bookTitle = jsonObject.optString(OpenLibraryBookConstants.TITLE);
-        }
-        return bookTitle;
+        JSONObjectAdapter jsonObjectAdapter = new JSONObjectAdapter(jsonObject);
+        holder.titleTextView.setText(jsonObjectAdapter.getBookTitle());
+        holder.authorTextView.setText(jsonObjectAdapter.getAuthors());
     }
 
     private ViewHolder createViewHolder(View convertView) {
