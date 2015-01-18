@@ -24,9 +24,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.zzolta.omgandroid.constants.book.IntentExtraDataBookConstants;
+import com.example.zzolta.omgandroid.constants.book.OpenLibraryBookConstants;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -160,12 +163,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         JSONObject jsonObject = (JSONObject) mJSONAdapter.getItem(position);
-        String coverID = jsonObject.optString("cover_i", "");
+        String coverID = jsonObject.optString(OpenLibraryBookConstants.COVER_I, "");
+        String title = jsonObject.optString(OpenLibraryBookConstants.TITLE, "");
+        JSONArray authors = jsonObject.optJSONArray(OpenLibraryBookConstants.AUTHOR_NAME);
 
         Intent detailIntent = new Intent(this, DetailActivity.class);
 
-        //TODO: put extra data here
-        detailIntent.putExtra("coverID", coverID);
+        detailIntent.putExtra(IntentExtraDataBookConstants.COVER_ID, coverID);
+        detailIntent.putExtra(IntentExtraDataBookConstants.TITLE, title);
+        detailIntent.putExtra(IntentExtraDataBookConstants.AUTHORS, authors.toString());
 
         startActivity(detailIntent);
     }
