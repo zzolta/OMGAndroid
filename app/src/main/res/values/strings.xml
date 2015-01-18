@@ -16,5 +16,7 @@
     <string name="cancel">Cancel</string>
     <string name="success">Success!</string>
     <string name="search_in_progress">Searching for books</string>
+    <string name="exampleImage">Android Logo</string>
+    <string name="coverImage">Cover Image</string>
 
 </resources>
